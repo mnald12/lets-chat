@@ -1,9 +1,13 @@
 <template>
 	<div class="lists-header">
 		<h4>Contact List</h4>
+		<div class="search-bar">
+			<input type="text" v-model="search" placeholder="Type to search...">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+		</div>
 	</div>
 	<div class="lists">
-		<div class="list" v-for="(user, i) in contacts" :key="i" @click="viewMessage(user.uid)">
+		<div class="list" v-for="(user, i) in filteredList" :key="i" @click="viewMessage(user.uid)">
 			<div class="avatar">
 				<img :src="user.avatar">
 			</div>
@@ -21,10 +25,23 @@
 				type : Array
 			}
 		},
+		data(){
+			return{
+				search : '',
+				contact : this.contacts
+			}
+		},
 		inheritAttrs : false,
 		methods : {
 			viewMessage(uid){
 				this.$emit('view-message', uid)
+			}
+		},
+		computed : {
+			filteredList(){
+				return this.contact.filter(post => {
+					return post.name.toLowerCase().includes(this.search.toLowerCase())
+				})
 			}
 		}
 	}
@@ -44,7 +61,7 @@
 		font-size: 30px;
 		padding: 0 10px;
 	}
-	.lists-header .search{
+	.lists-header .search-bar{
 		background: transparent;
 		width: auto;
 		height: auto;
@@ -54,19 +71,20 @@
 		right: 10px;
 		padding: 6px;
 	}
-	.lists-header .search input{
+	.lists-header .search-bar input{
 		width: 230px;
 		height: 40px;
-		padding: 6px;
+		padding: 15px 30px 15px 15px;
 		outline: none;
 		border: none;
 		background: transparent;
 		box-shadow: 0 0 3px 0 yellowgreen;
-		padding-right: 20px;
+		border-radius: 20px;
+		font-size: 17px;
 	}
-	.lists-header .search svg{
+	.lists-header .search-bar svg{
 		position: absolute;
-		right: 12px;
+		right: 15px;
 	}
 	.lists{
 		width: 100%;
@@ -115,5 +133,16 @@
 	}
 	.lists .list .content-list p{
 		padding: 6px;
+	}
+	@media(max-width: 576px){
+		.lists-header h4{
+			font-size: 22px;
+		}
+		.lists-header .search-bar input{
+			font-size: 16px;
+			width: 180px;
+			height: 30px;
+			padding: 8px 20px 8px 10px;
+		}
 	}
 </style>

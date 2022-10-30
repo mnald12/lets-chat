@@ -33,6 +33,7 @@ export default {
     return {
       mode : 0,
       user : firebase.auth().currentUser,
+      auths : firebase.auth(),
       db : firebase.firestore(),
       avatar : '',
       name : '',
@@ -45,7 +46,7 @@ export default {
     if(this.user){
       this.avatar = this.user.photoURL
       this.name = this.user.displayName 
-      this.db.collection('users')
+      this.db.collection('users').orderBy('name')
       .onSnapshot(querySnap => {
         let check = 0
         let usr = querySnap.docs.map(doc => doc.data())
@@ -63,11 +64,11 @@ export default {
         }
         if(check == 0){
           let user = {
-            avatar: firebase.auth().currentUser.photoURL,
-            name: firebase.auth().currentUser.displayName,
-            userID: firebase.auth().currentUser.uid
+            avatar: this.auths.currentUser.photoURL,
+            name: this.auths.currentUser.displayName,
+            userID: this.auths.currentUser.uid
           }
-          firebase.firestore().collection('users').add(user), { merge: true }
+          this.db.collection('users').add(user), { merge: true }
         }
       })
     }
